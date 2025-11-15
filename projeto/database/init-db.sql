@@ -1,0 +1,11 @@
+-- Create extensions
+CREATE EXTENSION IF NOT EXISTS uuid-ossp;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+-- Create schemas
+CREATE SCHEMA IF NOT EXISTS public;
+
+-- Grant privileges
+GRANT ALL PRIVILEGES ON SCHEMA public TO flashcards_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO flashcards_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO flashcards_user;

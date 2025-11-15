@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: flashcards-postgres
+    restart: unless-stopped
+    
+    environment:
+      POSTGRES_DB: ${DB_NAME:-flashcards}
+      POSTGRES_USER: ${DB_USER:-flashcards_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-flashcards_password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-flashcards_user} -d ${DB_NAME:-flashcards}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+    networks:
+      - flashcards_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  flashcards_network:
+    driver: bridge
