@@ -312,3 +312,8 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/django,python,go,java
 docs_base/
+
+.next/
+node_modules/
+.env.local
+next-env.d.ts
