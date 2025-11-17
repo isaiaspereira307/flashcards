@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, validator
 from typing import Optional
 from datetime import datetime
 import uuid
@@ -42,11 +42,21 @@ class CollectionSchema(BaseModel):
 class CreateFlashcardSchema(BaseModel):
     front: str = Field(..., min_length=1)
     back: str = Field(..., min_length=1)
+    video_url: Optional[str] = Field(None, max_length=1000)
+
+    @validator('video_url')
+    def validate_video_url(cls, v):
+        if not v:
+            return v
+        if not ("youtube.com" in v or "vimeo.com" in v or "youtu.be" in v):
+            raise ValueError('video_url must be a valid YouTube or Vimeo URL')
+        return v
 
 class FlashcardSchema(BaseModel):
     id: uuid.UUID
     front: str
     back: str
+    video_url: Optional[str]
     created_by_ia: bool
     created_at: datetime
 

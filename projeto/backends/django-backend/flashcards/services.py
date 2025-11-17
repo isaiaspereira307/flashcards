@@ -35,11 +35,12 @@ class FlashcardService:
         return Flashcard.objects.filter(collection=collection)
     
     @staticmethod
-    def create_flashcard(collection, front, back, created_by_ia=False):
+    def create_flashcard(collection, front, back, video_url=None, created_by_ia=False):
         flashcard = Flashcard.objects.create(
             collection=collection,
             front=front,
             back=back,
+            video_url=video_url,
             created_by_ia=created_by_ia
         )
         return flashcard

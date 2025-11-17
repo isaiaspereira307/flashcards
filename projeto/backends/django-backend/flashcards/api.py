@@ -245,6 +245,7 @@ def create_flashcard(request, collection_id: str, data: CreateFlashcardSchema):
         collection,
         data.front,
         data.back,
+        data.video_url,
         created_by_ia=False
     )
     
@@ -256,6 +257,7 @@ def create_flashcard(request, collection_id: str, data: CreateFlashcardSchema):
                 "id": str(flashcard.id),
                 "front": flashcard.front,
                 "back": flashcard.back,
+                "video_url": flashcard.video_url,
                 "created_by_ia": flashcard.created_by_ia,
                 "created_at": flashcard.created_at.isoformat()
             }

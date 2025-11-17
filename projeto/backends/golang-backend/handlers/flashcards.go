@@ -41,14 +41,15 @@ func (h *FlashcardsHandlers) Create(c *gin.Context) {
 		return
 	}
 
-	var req struct {
-		Front string                 `json:"front" binding:"required"`
-		Back  string                 `json:"back" binding:"required"`
-		Extra map[string]interface{} `json:"extra"`
-	}
+	var req models.FlashcardRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos: " + err.Error()})
+		return
+	}
+
+	if err := req.Validate(); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Link inválido: " + err.Error()})
 		return
 	}
 
@@ -57,6 +58,8 @@ func (h *FlashcardsHandlers) Create(c *gin.Context) {
 		CollectionID: uuid.MustParse(collectionID),
 		Front:        req.Front,
 		Back:         req.Back,
+		VideoURL:     req.VideoURL,
+		CreatedByIA:  false,
 	}
 
 	if err := h.db.Create(&flashcard).Error; err != nil {

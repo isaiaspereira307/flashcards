@@ -1,6 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
+def validate_videos_url(value: str | None) -> None:
+    if not value:
+        return
+    validator = URLValidator()
+    try:
+        validator(value)
+    except ValidationError:
+        raise ValidationError(f"{value} is not a valid URL.")
+    if "youtube.com" not in value \
+        and "youtu.be" not in value \
+        and "vimeo.com" not in value:
+        raise ValidationError("URL must be from YouTube or Vimeo.")
 
 class UserPlan(models.TextChoices):
     FREE = 'free', 'Free'
@@ -46,6 +61,12 @@ class Flashcard(models.Model):
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name='flashcards')
     front = models.TextField()
     back = models.TextField()
+    video_url = models.URLField(
+        max_length=1000,
+        null=True,
+        blank=True,
+        validators=[validate_videos_url]
+    )
     extra = models.JSONField(null=True, blank=True)
     created_by_ia = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
